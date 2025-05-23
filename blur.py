@@ -73,11 +73,7 @@ def createUniformKernel(rowSize,colSize):
     #creates a uniform array
     if rowSize % 2 == 0:
         rowSize += 1
-        print("adjusting row size to odd:",rowSize)
-    
-    if colSize % 2 == 0:
-        colSize += 1
-        print("adjusting col size to odd:",colSize)
+        print("adjusting size to odd:",rowSize)
 
     return np.full((rowSize,colSize, 3), 1/(rowSize*colSize))
 
