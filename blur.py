@@ -111,10 +111,10 @@ if __name__ == "__main__":
 
     #define a kernel
     #box blur
-    kernel = createUniformKernel(101,101)
+    kernel = createUniformKernel(21,21)
 
     #gaussian blur
-    gKernel = gaussianKernel(101,100)
+    gKernel = gaussianKernel(21,100)
     
 
     #process image
