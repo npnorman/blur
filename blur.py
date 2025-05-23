@@ -14,7 +14,7 @@ def showImage(img):
     plt.imshow(img[:,:,::-1])
     plt.show()
 
-def processImage(kernel, img):
+def processImage(kernel, img, img_original):
     #input: kernel: region of interest(roi), image
     #output: image that has been blurred
 
@@ -35,7 +35,7 @@ def processImage(kernel, img):
             #check to make sure it is the correct size
             if (row - limit[0] >= 0 and row + limit[0] <= count[0] - 1):
                 if (col - limit[1] >= 0 and col + limit[1] <= count[1] - 1):
-                    img[row,col] = newPOI(row,col,kernel, limit, img)
+                    img_original[row,col] = newPOI(row,col,kernel, limit, img)
 
 def newPOI(pixRow:int, pixCol:int, kernel, limit:int, img):
     #input: pixel coordinates, kernel, region of interest
@@ -84,15 +84,16 @@ def createUniformKernel(rowSize,colSize):
 if __name__ == "__main__":
     #img = loadImage("images/number_zero.jpg")
     [img, img_original] = loadImage("images/dog_photo.jpg")
-
     #define a kernel
     #box blur
-    kernel = createUniformKernel(20,20)
+    kernel = createUniformKernel(21,21)
+
+    #gaussian blur
 
     #process image
-    processImage(kernel, img)
+    processImage(kernel, img, img_original)
 
-    fig = plt.figure(figsize=(10,10))
+    fig = plt.figure(figsize=(15,8))
     plt.subplot(1,2,1)
     plt.imshow(img_original[:,:,::-1])
 
