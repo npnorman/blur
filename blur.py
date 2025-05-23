@@ -73,54 +73,72 @@ def createUniformKernel(rowSize,colSize):
     #creates a uniform array
     if rowSize % 2 == 0:
         rowSize += 1
-        print("adjusting size to odd:",rowSize)
+        print("adjusting row size to odd:",rowSize)
+    
+    if colSize % 2 == 0:
+        colSize += 1
+        print("adjusting col size to odd:",colSize)
 
     return np.full((rowSize,colSize, 3), 1/(rowSize*colSize))
 
 def gaussianKernel(size, sigma):
-    # https://www.kaggle.com/code/dasmehdixtr/gaussian-filter-implementation-from-scratch
     #based on guass' funtion
 
-    ax = np.linspace(-(size - 1) / 2., (size - 1) / 2., size)
+    # Make sure kernel size is odd
+    if size % 2 == 0:
+        size += 1
+
+    # Create a coordinate grid centered at zero
+    ax = np.arange(-size // 2 + 1, size // 2 + 1)
     xx, yy = np.meshgrid(ax, ax)
 
-    kernel = np.exp(-0.5 * (np.square(xx) + np.square(yy)) / np.square(sigma))
+    # Calculate the Gaussian function
+    kernel = (1 / (2 * np.pi * sigma**2)) * np.exp(-(xx**2 + yy**2) / (2 * sigma**2))
 
-    #kernel = np.repeat(kernel[:,:,np.newaxis], 3, axis=2)
+    # Normalize the kernel to make the sum = 1
+    kernel /= np.sum(kernel)
 
-    print(kernel/ np.sum(kernel))
-    print("opencv\n",cv2.getGaussianKernel(size,sigma))
+    expandedKernel = np.repeat(kernel[:, :, np.newaxis], 3, axis=2)
 
-    return kernel / np.sum(kernel)
+    return expandedKernel
 
 if __name__ == "__main__":
+    print("progress = 0%")
+
     #img = loadImage("images/number_zero.jpg")
-    [img, img_original] = loadImage("images/dog_photo.jpg")
-    [gimg, gimg_original] = loadImage("images/dog_photo.jpg")
+    [img, img_original] = loadImage("images/campus-center-night-trident.png")
+    [gimg, gimg_original] = loadImage("images/campus-center-night-trident.png")
 
     #define a kernel
     #box blur
-    kernel = createUniformKernel(21,21)
+    kernel = createUniformKernel(101,101)
 
     #gaussian blur
-    gKernel = gaussianKernel(5,100)
+    gKernel = gaussianKernel(101,100)
+    
 
     #process image
     processImage(kernel, img, img_original)
+    print("progress = 50%")
     processImage(gKernel, gimg, gimg_original)
+    print("progress = 90%")
 
     fig = plt.figure(figsize=(15,8))
     plt.subplot(2,2,1)
+    plt.subplot(2,2,1).set_title("Box Blur")
     plt.imshow(img_original[:,:,::-1])
 
     plt.subplot(2,2,2)
     plt.imshow(img[:,:,::-1])
 
     plt.subplot(2,2,3)
+    plt.subplot(2,2,3).set_title("Guass")
     plt.imshow(gimg_original[:,:,::-1])
 
     plt.subplot(2,2,4)
-    plt.imshow(cv2.GaussianBlur(gimg, (21,21), 100))
+    plt.imshow(cv2.GaussianBlur(gimg, (101,101), 100))
+
+    print("progress = 100%")
 
     plt.show()
     #showImage(img)
