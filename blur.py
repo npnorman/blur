@@ -8,7 +8,7 @@ def loadImage(image_path):
     img = cv2.imread(image_path)
 
     #return arrays
-    return img
+    return [img,img.copy()]
 
 def showImage(img):
     plt.imshow(img[:,:,::-1])
@@ -71,16 +71,33 @@ def newPOI(pixRow:int, pixCol:int, kernel, limit:int, img):
 
 def createUniformKernel(rowSize,colSize):
     #creates a uniform array
-    return np.full((rowSize,colSize), 1/(rowSize*colSize))
+    if rowSize % 2 == 0:
+        rowSize += 1
+        print("adjusting row size to odd:",rowSize)
+    
+    if colSize % 2 == 0:
+        colSize += 1
+        print("adjusting col size to odd:",colSize)
+
+    return np.full((rowSize,colSize, 3), 1/(rowSize*colSize))
 
 if __name__ == "__main__":
-    img = loadImage("images/number_zero.jpg")
+    #img = loadImage("images/number_zero.jpg")
+    [img, img_original] = loadImage("images/dog_photo.jpg")
 
     #define a kernel
     #box blur
-    kernel = createUniformKernel(3,3)
+    kernel = createUniformKernel(20,20)
 
     #process image
     processImage(kernel, img)
 
-    showImage(img)
+    fig = plt.figure(figsize=(10,10))
+    plt.subplot(1,2,1)
+    plt.imshow(img_original[:,:,::-1])
+
+    plt.subplot(1,2,2)
+    plt.imshow(img[:,:,::-1])
+
+    plt.show()
+    #showImage(img)
